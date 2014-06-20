@@ -35,16 +35,18 @@ func (s *StRingBuffer) Length() int {
 	return s.length
 }
 
-func (s *StRingBuffer) Push(line string) *StRingBuffer {
-	//Adjusting start, iff s.Full():
-	if s.Full() {
-		s.start = s.mod(s.start + 1)
-	} else {
-		s.length++
+func (s *StRingBuffer) Push(lines ...string) *StRingBuffer {
+	for _, line := range lines {
+		//Adjusting start, iff s.Full():
+		if s.Full() {
+			s.start = s.mod(s.start + 1)
+		} else {
+			s.length++
+		}
+		//Writing values:
+		s.end = s.mod(s.end + 1)
+		s.lines[s.end] = line
 	}
-	//Writing values:
-	s.end = s.mod(s.end + 1)
-	s.lines[s.end] = line
 	//Return for chaining:
 	return s
 }
@@ -61,16 +63,18 @@ func (s *StRingBuffer) Pop() string {
 	return ret
 }
 
-func (s *StRingBuffer) Unshift(line string) *StRingBuffer {
-	//Adjusting end, iff s.Full():
-	if s.Full() {
-		s.end = s.mod(s.end - 1)
-	} else {
-		s.length++
+func (s *StRingBuffer) Unshift(lines ...string) *StRingBuffer {
+	for _, line := range lines {
+		//Adjusting end, iff s.Full():
+		if s.Full() {
+			s.end = s.mod(s.end - 1)
+		} else {
+			s.length++
+		}
+		//Writing values
+		s.lines[s.start] = line
+		s.start = s.mod(s.start - 1)
 	}
-	//Writing values
-	s.lines[s.start] = line
-	s.start = s.mod(s.start - 1)
 	//Return for chaining:
 	return s
 }

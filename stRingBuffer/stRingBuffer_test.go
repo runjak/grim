@@ -8,12 +8,12 @@ import (
 
 func TestInfo(t *testing.T) {
 	//Starting with an empty buffer:
-  srb := NewStRingBuffer(5)
+	srb := NewStRingBuffer(5)
 	if !srb.Empty() {
 		t.Errorf("StRingBuffer was not empty after NewStRingBuffer(x).")
 	}
 	//Pushing some elements:
-	srb.Push("1").Push("2").Push("3").Push("4").Push("5")
+	srb.Push("1", "2", "3", "4", "5")
 	l := srb.Length()
 	if l != 5 {
 		t.Errorf("StRingBuffer didn't grow to expected Length(), but to %i.", l)
@@ -33,7 +33,7 @@ func TestInfo(t *testing.T) {
 func TestAddTake(t *testing.T) {
 	srb := NewStRingBuffer(3)
 	//Testing Push/Pop:
-	srb.Push("1").Push("2").Push("3").Push("4")
+	srb.Push("1", "2", "3", "4")
 	s := ""
 	for !srb.Empty() {
 		s += srb.Pop()
@@ -42,7 +42,7 @@ func TestAddTake(t *testing.T) {
 		t.Errorf("StRingBuffer Pop() didn't reverse Push(), and gave '%s'.", s)
 	}
 	//Testing Un-/Shift:
-	srb.Unshift("4").Unshift("3").Unshift("2").Unshift("1")
+	srb.Unshift("4", "3", "2", "1")
 	s = ""
 	for !srb.Empty() {
 		s += srb.Shift()
@@ -51,7 +51,7 @@ func TestAddTake(t *testing.T) {
 		t.Errorf("StRingBuffer Shift() didn't reverse Unshift(), and gave '%s'.", s)
 	}
 	//Testing Push/Shift:
-	srb.Push("1").Push("2").Push("3").Push("4")
+	srb.Push("1", "2", "3", "4")
 	s = ""
 	for !srb.Empty() {
 		s += srb.Shift()
@@ -60,7 +60,7 @@ func TestAddTake(t *testing.T) {
 		t.Errorf("StRingBuffer Shift() didn't hold the last Push() in order, but '%s'.", s)
 	}
 	//Testing Unshift/Pop:
-	srb.Unshift("4").Unshift("3").Unshift("2").Unshift("1")
+	srb.Unshift("4", "3", "2", "1")
 	s = ""
 	for !srb.Empty() {
 		s += srb.Pop()
@@ -72,7 +72,7 @@ func TestAddTake(t *testing.T) {
 
 func TestMapEach(t *testing.T) {
 	srb := NewStRingBuffer(3)
-	srb.Push(".").Push(".").Push(".")
+	srb.Push(".", ".", ".")
 	c := 0
 	f := func(s string) string {
 		c++
