@@ -1,4 +1,4 @@
-package stRingBuffer_test
+package stRingBuffer
 
 import (
 	"fmt"
@@ -6,11 +6,9 @@ import (
 	"testing"
 )
 
-import "grim/stRingBuffer"
-
 func TestInfo(t *testing.T) {
 	//Starting with an empty buffer:
-	srb := stRingBuffer.NewStRingBuffer(5)
+  srb := NewStRingBuffer(5)
 	if !srb.Empty() {
 		t.Errorf("StRingBuffer was not empty after NewStRingBuffer(x).")
 	}
@@ -33,7 +31,7 @@ func TestInfo(t *testing.T) {
 }
 
 func TestAddTake(t *testing.T) {
-	srb := stRingBuffer.NewStRingBuffer(3)
+	srb := NewStRingBuffer(3)
 	//Testing Push/Pop:
 	srb.Push("1").Push("2").Push("3").Push("4")
 	s := ""
@@ -73,7 +71,7 @@ func TestAddTake(t *testing.T) {
 }
 
 func TestMapEach(t *testing.T) {
-	srb := stRingBuffer.NewStRingBuffer(3)
+	srb := NewStRingBuffer(3)
 	srb.Push(".").Push(".").Push(".")
 	c := 0
 	f := func(s string) string {
