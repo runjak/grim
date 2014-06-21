@@ -23,7 +23,7 @@ func TestInfo(t *testing.T) {
 		t.Errorf("StRingBuffer isn't Full(), but we expected it to be.")
 	}
 	//String output:
-	want := "StRingBuffer{start: 0, end: 0, lines: [5 1 2 3 4], length: 5}"
+	want := "StRingBuffer{start: 0, end: 0, lines: [1 2 3 4 5], length: 5}"
 	get := fmt.Sprintf("%s", srb) // Mainly so that 'fmt' can be imported.
 	if get != want {
 		t.Errorf("StRingBuffer String() test failed with get='%s'.\n", get)
@@ -86,5 +86,41 @@ func TestMapEach(t *testing.T) {
 	srb.Each(g).EachR(g)
 	if sum != ".16.25.34.34.25.16" {
 		t.Errorf("StRingBuffer MapEach test didn't hold the expected result but '%s'.\n", sum)
+	}
+}
+
+func TestUnsliceSlice(t *testing.T) {
+	//A helper function to compare two slices of strings:
+	test := func(xs []string, ys []string) {
+		if len(xs) != len(ys) {
+			t.Errorf("UnsliceSlice didn't preserve length of the slice.")
+			return
+		}
+		for i, x := range xs {
+			if ys[i] != x {
+				t.Errorf("UnsliceSlice changed at least one element: %v != %v", xs, ys)
+				return
+			}
+		}
+	}
+	//Our test data:
+	xs := []string{"a", "b", "c"}
+	//Does Unslice->Slice hold:
+	test(xs, Unslice(xs).Slice())
+	//Pushing into a new buffer, does Slice->Unslice->Slice hold:
+	srb := NewStRingBuffer(3)
+	srb = Unslice(srb.Push(xs...).Slice())
+	test(xs, srb.Slice())
+	//Is Length correct?
+	if srb.Length() != len(xs) {
+		t.Errorf("Slice->Unslice didn't preserver length.")
+	}
+	//Is Shift as expected?
+	if srb.Shift() != "a" {
+		t.Errorf("First element wasn't as expected.")
+	}
+	//Is Pop as expected?
+	if l := srb.Pop(); l != "c" {
+		t.Errorf("Last element wasn't as expected, \"%s\" != \"c\"", l)
 	}
 }

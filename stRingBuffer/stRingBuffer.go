@@ -62,8 +62,8 @@ func (s *StRingBuffer) Push(lines ...string) *StRingBuffer {
 			s.length++
 		}
 		//Writing values:
-		s.end = s.mod(s.end + 1)
 		s.lines[s.end] = line
+		s.end = s.mod(s.end + 1)
 	}
 	//Return for chaining:
 	return s
@@ -80,9 +80,9 @@ func (s *StRingBuffer) Pop() string {
 	} else {
 		s.length--
 	}
+	s.end = s.mod(s.end - 1)
 	ret := s.lines[s.end]
 	s.lines[s.end] = ""
-	s.end = s.mod(s.end - 1)
 	return ret
 }
 
@@ -100,8 +100,8 @@ func (s *StRingBuffer) Unshift(lines ...string) *StRingBuffer {
 			s.length++
 		}
 		//Writing values
-		s.lines[s.start] = line
 		s.start = s.mod(s.start - 1)
+		s.lines[s.start] = line
 	}
 	//Return for chaining:
 	return s
@@ -118,9 +118,9 @@ func (s *StRingBuffer) Shift() string {
 	} else {
 		s.length--
 	}
-	s.start = s.mod(s.start + 1)
 	ret := s.lines[s.start]
 	s.lines[s.start] = ""
+	s.start = s.mod(s.start + 1)
 	return ret
 }
 
@@ -154,6 +154,35 @@ func (s *StRingBuffer) Each(f func(string)) *StRingBuffer {
 // Like Each, but in reverse order.
 func (s *StRingBuffer) EachR(f func(string)) *StRingBuffer {
 	return s.MapR(mkId(f))
+}
+
+// Returns a slice representing the contents of a StRingBuffer.
+func (s *StRingBuffer) Slice() []string {
+	slice := make([]string, s.Length())
+	if !s.Empty() {
+		if s.start < s.end {
+			end := s.end + 1
+			copy(slice, s.lines[s.start:end])
+		} else {
+			part1 := s.lines[s.start:]
+			part2 := s.lines[0:s.end]
+			copy(slice, part1)
+			copy(slice[len(part1):], part2)
+		}
+	}
+	return slice
+}
+
+/*
+  Returns a StRingBuffer representing a given []string.
+  The StRingBuffer will be full.
+  Shift will hold the first element of the given slice,
+  and Pop will hold the last.
+*/
+func Unslice(lines []string) *StRingBuffer {
+	srb := &StRingBuffer{lines: lines, length: len(lines)}
+	srb.end = srb.mod(srb.length)
+	return srb
 }
 
 // Helper function for the two Each functions.
