@@ -23,7 +23,7 @@ func TestInfo(t *testing.T) {
 		t.Errorf("StRingBuffer isn't Full(), but we expected it to be.")
 	}
 	//String output:
-	want := "StRingBuffer {start: 0, end: 0, lines: [5 1 2 3 4], length: 5}"
+	want := "StRingBuffer{start: 0, end: 0, lines: [5 1 2 3 4], length: 5}"
 	get := fmt.Sprintf("%s", srb) // Mainly so that 'fmt' can be imported.
 	if get != want {
 		t.Errorf("StRingBuffer String() test failed with get='%s'.\n", get)
