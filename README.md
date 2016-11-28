@@ -1,4 +1,5 @@
-grim
+stRingBuffer
 ====
 
-I'm not entirely sure what this will become, but I'll probably learn me some go along the way.
+This repo contains a stRingBuffer module I wrote just for fun.
+With it I explored writing tests for go.
